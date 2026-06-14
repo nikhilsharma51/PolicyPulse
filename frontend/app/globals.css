@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-primary: #0F172A;
+  --color-accent: #C0843D;
+  --color-accent-hover: #A77130;
+  --color-background-custom: #F8FAFC;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+}
