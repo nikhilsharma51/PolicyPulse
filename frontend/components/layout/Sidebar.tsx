@@ -68,11 +68,7 @@ export default function Sidebar() {
           <span>Settings</span>
         </Link>
         
-        {/* System node tag */}
-        <div className="mt-4 px-3 py-2 border border-slate-100 bg-[#F8FAFC] flex flex-col gap-0.5">
-          <span className="font-mono text-[8px] text-slate-400 uppercase">ACTIVE_NODE</span>
-          <span className="font-mono text-[9px] text-slate-600 font-bold uppercase tracking-wider">US-EAST-PROD // 09</span>
-        </div>
+        
       </div>
     </aside>
   );

@@ -36,14 +36,14 @@ export default function Topbar() {
         <span className="h-5 w-px bg-slate-200"></span>
 
         {/* Notifications */}
-        <button
+        {/* <button
           type="button"
           className="relative p-1.5 border border-slate-200 bg-[#F8FAFC] text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none"
         >
           <span className="sr-only">View notifications</span>
           <Bell className="h-4 w-4" />
           <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 bg-accent rounded-full"></span>
-        </button>
+        </button> */}
 
         {/* User initials block */}
         <div className="flex items-center gap-2.5">

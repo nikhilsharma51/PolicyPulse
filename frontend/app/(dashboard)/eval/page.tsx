@@ -19,15 +19,7 @@ export default function EvalPage() {
         </div>
 
         {/* System node tag */}
-        <div className="flex items-center gap-3 text-[10px] font-mono">
-          <div className="px-2.5 py-1 border border-slate-200 bg-white flex items-center gap-1.5 text-slate-600">
-            <Server className="h-3 w-3 text-slate-400" />
-            <span>BATCH_ID: 109_PROD</span>
-          </div>
-          <div className="px-2.5 py-1 border border-slate-200 bg-white flex items-center gap-1.5 text-emerald-700 font-bold bg-emerald-50">
-            <span>QA_VERIFIED</span>
-          </div>
-        </div>
+        
       </div>
 
       {/* RAGAS Metrics Grid */}
