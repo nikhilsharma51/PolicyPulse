@@ -49,7 +49,7 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
-                href="#launch"
+                href="/dashboard"
                 className="inline-flex h-11 items-center justify-center border border-slate-900 bg-slate-900 px-6 font-mono text-xs uppercase tracking-wider text-white hover:bg-accent hover:border-accent hover:text-slate-900 transition-all duration-200"
               >
                 Launch Platform

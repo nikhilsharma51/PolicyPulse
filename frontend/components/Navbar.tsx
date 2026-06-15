@@ -51,7 +51,7 @@ export default function Navbar() {
           {/* Action CTA */}
           <div className="hidden md:flex items-center">
             <Link
-              href="#launch"
+              href="/dashboard"
               className="inline-flex h-9 items-center justify-center border border-slate-900 bg-slate-900 px-5 text-xs font-mono uppercase tracking-wider text-white hover:bg-accent hover:border-accent hover:text-slate-900 transition-all duration-200"
             >
               Launch App
@@ -102,7 +102,7 @@ export default function Navbar() {
             </Link>
             <div className="pt-4 border-t border-slate-200 mt-4">
               <Link
-                href="#launch"
+                href="/dashboard"
                 onClick={() => setIsOpen(false)}
                 className="flex w-full h-10 items-center justify-center border border-slate-900 bg-slate-900 text-xs font-mono uppercase tracking-wider text-white hover:bg-accent hover:border-accent hover:text-slate-900 transition-all duration-200"
               >

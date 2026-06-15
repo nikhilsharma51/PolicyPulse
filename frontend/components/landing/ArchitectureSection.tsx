@@ -6,49 +6,49 @@ export default function ArchitectureSection() {
       stage: "01",
       title: "Documents Ingestion",
       desc: "TLS-secured upload. Text extraction via Apache Tika/custom OCR. Text normalization.",
-     
+      tech: "PDF / Word / Markdown"
     },
     {
       stage: "02",
       title: "Chunking & Tokenization",
       desc: "Recursive character split with semantic overlap thresholds. Token size limit: 512 tokens.",
-      
+      tech: "RecursiveCharacterTextSplitter"
     },
     {
       stage: "03",
       title: "Dense Embeddings",
       desc: "High-dimensional vector computation mapping documents to semantic space.",
-      
+      tech: "text-embedding-3-large"
     },
     {
       stage: "04",
       title: "Hybrid Retrieval",
       desc: "Parallel search: Dense vector search (HNSW index) + BM25 keyword index lookup.",
-      
+      tech: "HNSW + Lucene BM25"
     },
     {
       stage: "05",
       title: "RRF Rank Fusion",
       desc: "Merges ranked candidate lists using Reciprocal Rank Fusion formulas.",
-      
+      tech: "RRF (Constant k = 60)"
     },
     {
       stage: "06",
       title: "Cross-Encoder Reranking",
       desc: "Deploys cross-encoder scoring to evaluate direct question-context token interaction.",
-      
+      tech: "bge-reranker-large"
     },
     {
       stage: "07",
       title: "LLM Context Compilation",
       desc: "Top 5 chunks compiled into prompt context. LLM restricted to context—no database access.",
-      
+      tech: "Llama-3 / GPT-4o"
     },
     {
       stage: "08",
       title: "RAGAS Evaluation",
       desc: "Real-time checking of Faithfulness (grounding) and Answer Relevance (context overlap).",
-      
+      tech: "RAGAS Framework"
     }
   ];
 

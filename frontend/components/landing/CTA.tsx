@@ -27,7 +27,7 @@ export default function CTA() {
             
             <div className="flex flex-col sm:flex-row gap-3 pt-4 font-mono text-xs uppercase tracking-wider">
               <Link
-                href="#launch"
+                href="/dashboard"
                 className="inline-flex h-11 items-center justify-center bg-accent text-slate-950 px-6 font-bold hover:bg-accent-hover transition-colors"
               >
                 Launch Platform
