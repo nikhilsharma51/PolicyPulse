@@ -5,42 +5,32 @@ export default function MetricsRow() {
     {
       title: "Documents Indexed",
       value: "42",
-      tag: "12,402 Chunks",
       icon: Database,
       desc: "Raw policy sources ingested, parsed, and tokenized."
     },
     {
       title: "Questions Answered",
       value: "1,284",
-      tag: "Avg Latency 134ms",
       icon: HelpCircle,
       desc: "Grounded responses generated with verified context."
     },
     {
       title: "Average Faithfulness",
       value: "0.96",
-      tag: "RAGAS Compliant",
       icon: ShieldCheck,
       desc: "Context-to-generation truth score across queries."
     },
-    {
-      title: "Active Policy Alerts",
-      value: "03",
-      tag: "Requires Review",
-      icon: AlertTriangle,
-      desc: "Newly identified regulatory changes matching rules.",
-      isAlert: true
-    }
+   
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
       {metrics.map((item, idx) => {
         const Icon = item.icon;
         return (
           <div
             key={idx}
-            className={`border bg-white p-5 flex flex-col justify-between min-h-[140px] hover:shadow-sm transition-shadow duration-150 ${
+            className={`border bg-white p-5 flex flex-col justify-between gap-5 min-h-[140px] hover:shadow-sm transition-shadow duration-150 ${
               item.isAlert ? "border-accent" : "border-slate-200"
             }`}
           >
