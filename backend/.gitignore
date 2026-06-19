@@ -8,3 +8,6 @@ __pycache__/
 .env
 
 test_supabase.py
+test_ingest.py
+
+test_policy.pdf
