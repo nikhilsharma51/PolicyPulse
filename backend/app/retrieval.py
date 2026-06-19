@@ -2,7 +2,7 @@ from db import supabase
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from sentence_transformers import CrossEncoder
 from ingest import embedder
-from config import EMBEDDING_MODEL , DENSE_TOP_K , RRF_K , RERANKER_MODEL , RERANK_TOP_N
+from config import EMBEDDING_MODEL , DENSE_TOP_K , RRF_K , RERANKER_MODEL , RERANK_TOP_N , SPARSE_TOP_K
 
 def dense_search(doc_id:str, query:str , k : int = DENSE_TOP_K)->list[dict]:
     query_embedding = embedder.embed_query(query)
@@ -12,21 +12,30 @@ def dense_search(doc_id:str, query:str , k : int = DENSE_TOP_K)->list[dict]:
         "match_doc_id" : doc_id,
         "match_count" : k
     }).execute()
+    
+    data = result.data
+    if not isinstance(data , list):
+        raise ValueError(f"Expected list from match_chunks RPC, got {type(data)}")
+    return data
+    
 
-    return result.data
 
-def sparse_search(doc_id : str, query:str, k: int = DENSE_TOP_K) ->list[dict]:
+def sparse_search(doc_id : str, query:str, k: int = SPARSE_TOP_K) ->list[dict]:
         
     result = supabase.rpc("match_chunks_fts", {
         "query_text": query,
         "match_doc_id": doc_id,
         "match_count": k,
         }).execute()
-    return result.data
+    data = result.data
+    if not isinstance(data , list):
+        raise ValueError(f"Expected list from match_chunks RPC, got {type(data)}")
+    return data
+
 
 def rrf_merge(dense_result : list[dict] , sparse_result : list[dict] , k : int = RRF_K) -> list[dict]:
-    scores : dict[str,float] =[]
-    chunk_lookup : dict[str , dict] = []
+    scores : dict[str,float] ={}
+    chunk_lookup : dict[str , dict] = {}
 
     for rank , chunk in enumerate(dense_result):
         chunk_id = chunk["id"]
@@ -57,8 +66,8 @@ def rerank(query:str , chunks:list[dict] , top_n : int = RERANK_TOP_N) -> list[d
 
 
 def hybrid_retrieve(query: str, doc_id: str) -> list[dict]:
-    dense = dense_search(query, doc_id)
-    sparse = sparse_search(query, doc_id)
+    dense = dense_search(doc_id=doc_id, query=query)
+    sparse = sparse_search(doc_id=doc_id, query=query)
     merged = rrf_merge(dense, sparse)
     reranked = rerank(query, merged)
     return reranked
