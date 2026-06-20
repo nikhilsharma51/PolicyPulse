@@ -10,7 +10,7 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
 
 # --- Embedding model ---
-EMBEDDING_MODEL = "models/text-embedding-004"
+EMBEDDING_MODEL = "models/gemini-embedding-2"
 EMBEDDING_DIM = 768
 
 # --- Chunking ---
@@ -29,7 +29,7 @@ RERANK_TOP_N = 5     # chunks sent to the LLM after reranking
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 # --- Generation ---
-LLM_MODEL = "gemini-1.5-flash"
+LLM_MODEL = "gemini-2.5-flash"
 LLM_TEMPERATURE = 0.1
 LLM_MAX_OUTPUT_TOKENS = 1024
 

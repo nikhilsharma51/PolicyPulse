@@ -51,14 +51,22 @@ def rrf_merge(dense_result : list[dict] , sparse_result : list[dict] , k : int =
     return [chunk_lookup[cid] for cid in ranked_ids]     
 
 
-reranker = CrossEncoder(RERANKER_MODEL)
+_reranker: CrossEncoder | None = None
+
+
+def get_reranker() -> CrossEncoder:
+    global _reranker
+    if _reranker is None:
+        _reranker = CrossEncoder(RERANKER_MODEL)
+    return _reranker
+
 
 def rerank(query:str , chunks:list[dict] , top_n : int = RERANK_TOP_N) -> list[dict]:
     if not chunks :
         return[]
     
     pairs = [(query , c["content"])for c in chunks]
-    scores = reranker.predict(pairs)
+    scores = get_reranker().predict(pairs)
     for chunk , score in zip(chunks,scores):
         chunk["rerank_score"] = float(score)
     ranked = sorted(chunks, key=lambda c: c["rerank_score"], reverse=True)

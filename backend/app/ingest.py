@@ -3,6 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from fastapi import APIRouter , UploadFile ,HTTPException
 from app.db import supabase
+from app.config import EMBEDDING_DIM, EMBEDDING_MODEL
 import uuid
 import time
 import io
@@ -43,7 +44,7 @@ def chunk_pages(pages : list[dict]) -> list[dict]:
    return chunks     
 
 
-embedder = GoogleGenerativeAIEmbeddings(model ="models/text-embedding-004")
+embedder = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL, output_dimensionality=EMBEDDING_DIM)
 
 def embed_chunks(chunks : list[dict], batch_size: int = 20) -> list[dict]:
    texts = [c["content"] for c in chunks]
