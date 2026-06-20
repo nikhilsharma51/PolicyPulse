@@ -2,25 +2,7 @@ import { FileText, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
 
 export default function RecentActivity() {
   const activities = [
-    {
-      document: "EU Data Privacy Directive (2026/184)",
-      updated: "2 hours ago",
-
-    },
-    {
-      document: "Vendor Security Compliance Checklist v3",
-      updated: "1 day ago",
-
-    },
-    {
-      document: "SEC Cyber Incident Disclosure Rule §1.4",
-      updated: "3 days ago",
-  
-    },
-    {
-      document: "FedRAMP High Baseline Control Plan",
-      updated: "5 days ago",
-    }
+   {}
   ];
 
   return (

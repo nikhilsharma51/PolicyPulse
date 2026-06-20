@@ -3,7 +3,7 @@ import { FileText, Award, Percent, Hash } from "lucide-react";
 interface EvidenceDetails {
   citation: string;
   sourceDoc: string;
-  page: number;
+  page: number | string;
   confidence: number;
   chunkText: string;
 }
@@ -56,7 +56,7 @@ export default function EvidencePanel({
                 <span className="text-[8px] text-slate-400 uppercase">Confidence</span>
                 <span className="font-bold text-emerald-600 flex items-center gap-0.5 mt-1">
                   <Percent className="h-3 w-3 text-emerald-500" />
-                  {currentEvidence.confidence * 100}%
+                  {Math.round(currentEvidence.confidence * 100)}%
                 </span>
               </div>
               <div className="border border-slate-200 bg-white p-2.5 flex flex-col justify-between">
@@ -81,7 +81,7 @@ export default function EvidencePanel({
                 Retrieved Context Chunk
               </span>
               <p className="text-[11px] text-slate-600 leading-relaxed overflow-y-auto flex-grow max-h-[140px] italic">
-                "{currentEvidence.chunkText}"
+                &quot;{currentEvidence.chunkText}&quot;
               </p>
             </div>
 
@@ -106,3 +106,5 @@ export default function EvidencePanel({
     </div>
   );
 }
+
+
