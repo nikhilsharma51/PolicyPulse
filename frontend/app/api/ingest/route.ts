@@ -1,6 +1,7 @@
-
-import { error } from "console";
 import { NextResponse, NextRequest } from "next/server";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const FASTAPI_URL = process.env.FASTAPI_URL || "http://127.0.0.1:8000"
 

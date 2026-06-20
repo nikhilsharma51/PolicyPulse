@@ -1,4 +1,4 @@
-import { Database, HelpCircle, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Database, HelpCircle, ShieldCheck } from "lucide-react";
 
 export default function MetricsRow() {
   const metrics = [
@@ -30,27 +30,18 @@ export default function MetricsRow() {
         return (
           <div
             key={idx}
-            className={`border bg-white p-5 flex flex-col justify-between gap-5 min-h-[140px] hover:shadow-sm transition-shadow duration-150 ${
-              item.isAlert ? "border-accent" : "border-slate-200"
-            }`}
+            className="border border-slate-200 bg-white p-5 flex flex-col justify-between gap-5 min-h-[140px] hover:shadow-sm transition-shadow duration-150"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-slate-500">
                 {item.title}
               </span>
-              <Icon className={`h-4.5 w-4.5 stroke-[1.5] ${item.isAlert ? "text-accent" : "text-slate-400"}`} />
+              <Icon className="h-4.5 w-4.5 stroke-[1.5] text-slate-400" />
             </div>
 
             <div className="py-3 flex items-baseline gap-2">
               <span className="font-mono text-3xl font-extrabold text-slate-900 tracking-tight">
                 {item.value}
-              </span>
-              <span className={`font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 border ${
-                item.isAlert
-                  ? "bg-accent/10 border-accent text-accent font-bold"
-                  : "bg-slate-50 border-slate-200 text-slate-600"
-              }`}>
-                {item.tag}
               </span>
             </div>
 

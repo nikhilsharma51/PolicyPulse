@@ -1,5 +1,7 @@
 # app/main.py
-from fastapi import FastAPI, Request ,HTTPException
+import os
+
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
@@ -9,13 +11,15 @@ from app.db import supabase
 
 app = FastAPI(title="PolicyPulse RAG API")
 
+_cors_origins = [
+    origin.strip()
+    for origin in os.environ.get("FRONTEND_URL", "http://localhost:3000").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        # add your deployed Vercel URL here once you deploy, e.g.
-        # "https://policypulse.vercel.app",
-    ],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,4 +70,16 @@ def get_document(doc_id: str):
     )
     if not result.data:
         raise HTTPException(404, "Document not found")
+    return result.data
+
+@app.get("/eval/scores")
+def get_eval_scores(doc_id: str, limit: int = 20):
+    result = (
+        supabase.table("ragas_scores")
+        .select("*")
+        .eq("doc_id", doc_id)
+        .order("created_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
     return result.data
