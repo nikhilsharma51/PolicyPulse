@@ -1,5 +1,5 @@
 # app/main.py
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request ,HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
@@ -42,3 +42,28 @@ async def query(request: Request):
         stream_answer(question, doc_id),
         media_type="text/event-stream",
     )
+
+@app.get("/documents")
+def list_documents(limit: int = 20):
+    result = (
+        supabase.table("documents")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    return result.data
+
+
+@app.get("/documents/{doc_id}")
+def get_document(doc_id: str):
+    result = (
+        supabase.table("documents")
+        .select("*")
+        .eq("id", doc_id)
+        .single()
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(404, "Document not found")
+    return result.data
