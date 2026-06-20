@@ -42,16 +42,3 @@ async def query(request: Request):
         stream_answer(question, doc_id),
         media_type="text/event-stream",
     )
-
-
-@app.get("/eval/scores")
-def get_eval_scores(doc_id: str, limit: int = 20):
-    result = (
-        supabase.table("ragas_scores")
-        .select("*")
-        .eq("doc_id", doc_id)
-        .order("created_at", desc=True)
-        .limit(limit)
-        .execute()
-    )
-    return result.data

@@ -1,8 +1,8 @@
-from db import supabase
+from app.db import supabase
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from sentence_transformers import CrossEncoder
-from ingest import embedder
-from config import EMBEDDING_MODEL , DENSE_TOP_K , RRF_K , RERANKER_MODEL , RERANK_TOP_N , SPARSE_TOP_K
+from app.ingest import embedder
+from app.config import EMBEDDING_MODEL , DENSE_TOP_K , RRF_K , RERANKER_MODEL , RERANK_TOP_N , SPARSE_TOP_K
 
 def dense_search(doc_id:str, query:str , k : int = DENSE_TOP_K)->list[dict]:
     query_embedding = embedder.embed_query(query)

@@ -2,7 +2,7 @@ from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from fastapi import APIRouter , UploadFile ,HTTPException
-from db import supabase
+from app.db import supabase
 import uuid
 import time
 import io
