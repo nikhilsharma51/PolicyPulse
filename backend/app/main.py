@@ -44,7 +44,7 @@ async def query(request: Request):
     )
 
 @app.get("/documents")
-def list_documents(limit: int = 20):
+def list_documents(limit: int = 6):
     result = (
         supabase.table("documents")
         .select("*")

@@ -3,6 +3,7 @@ import RecentActivity from "@/components/dashboard/RecentActivity";
 import AlertsPanel from "@/components/dashboard/AlertsPanel";
 import { Server, Compass, Network } from "lucide-react";
 
+
 export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6 font-sans">

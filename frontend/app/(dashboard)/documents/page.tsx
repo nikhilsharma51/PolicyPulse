@@ -46,7 +46,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function DocumentsPage() {
   const [uploads, setUploads] = useState<UploadRow[]>([
-   
+
   ]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -161,7 +161,7 @@ export default function DocumentsPage() {
   return (
     <div className="p-6 space-y-6 font-sans">
       {/* Header */}
-      <Header/>
+      <Header />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Hand: Upload Zone & Recent Uploads (Col-span 8) */}
@@ -178,13 +178,11 @@ export default function DocumentsPage() {
             role="button"
             tabIndex={0}
             aria-disabled={state === "uploading"}
-            className={`border border-dashed p-10 text-center flex flex-col items-center justify-center bg-white transition-colors duration-150 ${
-              state === "uploading" ? "cursor-wait opacity-70" : "cursor-pointer"
-            } ${
-              isDragging
+            className={`border border-dashed p-10 text-center flex flex-col items-center justify-center bg-white transition-colors duration-150 ${state === "uploading" ? "cursor-wait opacity-70" : "cursor-pointer"
+              } ${isDragging
                 ? "border-accent bg-slate-50/50"
                 : "border-slate-300 hover:border-slate-400"
-            }`}
+              }`}
           >
             <input
               ref={inputRef}
@@ -232,13 +230,13 @@ export default function DocumentsPage() {
           )}
 
           {/* Recent Uploads Table */}
-          <RecentUpload uploads = {uploads}/>
+          <RecentUpload uploads={uploads} />
         </div>
 
         {/* Right Hand: Document Status Summary Panel (Col-span 4) */}
         <div className="lg:col-span-4 space-y-6">
           {/* Document Status */}
-          <Status/>
+          <Status />
         </div>
       </div>
     </div>
