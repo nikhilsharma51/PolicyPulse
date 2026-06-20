@@ -11,3 +11,4 @@ test_supabase.py
 test_ingest.py
 
 test_policy.pdf
+test_retrieval.py
