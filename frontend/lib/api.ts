@@ -3,6 +3,23 @@ export type QueryToken = { token: string };
 export type QueryDone = { done: true; sources: Source[] };
 export type Source = { source_number: number; page: number | string; content: string };
 
+export type Document = {
+  id: string;
+  name: string;
+  status?: string;
+  chunk_count?: number | null;
+  created_at: string;
+};
+
+export async function fetchDocuments(limit = 50): Promise<Document[]> {
+  const res = await fetch(`/api/documents?limit=${limit}`);
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Failed to fetch documents");
+  }
+  return res.json();
+}
+
 export async function streamQuery(
   question: string,
   docId: string,
@@ -42,6 +59,10 @@ export async function streamQuery(
         if (payload === "[DONE]") continue;
 
         const parsed = JSON.parse(payload);
+        if ("error" in parsed) {
+          onError(parsed.error);
+          return;
+        }
         if ("token" in parsed) {
           onToken(parsed.token);
         } else if ("done" in parsed) {

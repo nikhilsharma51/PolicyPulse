@@ -11,25 +11,22 @@ export default function Status() {
             </div>
 
             <div className="space-y-3 font-mono text-[11px]">
+                
                 <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                    <span className="text-slate-500 uppercase">Documents indexed</span>
-                    <span className="font-bold text-slate-900">42 / 45</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                    <span className="text-slate-500 uppercase">Total vector chunks</span>
-                    <span className="font-bold text-slate-900">12,402</span>
+                    <span className="text-slate-500 uppercase">RERANK_TOP_N</span>
+                    <span className="font-bold text-slate-900">5</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-slate-50">
                     <span className="text-slate-500 uppercase">Average chunk size</span>
                     <span className="font-bold text-slate-900">512 Tokens</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                    <span className="text-slate-500 uppercase">Vector latency</span>
-                    <span className="font-bold text-slate-900">~24ms</span>
+                    <span className="text-slate-500 uppercase">Vector dimension</span>
+                    <span className="font-bold text-slate-900">768</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
                     <span className="text-slate-500 uppercase">Embedding model</span>
-                    <span className="font-bold text-accent">text-embedding-3</span>
+                    <span className="font-bold text-accent">text-embedding-2</span>
                 </div>
             </div>
 

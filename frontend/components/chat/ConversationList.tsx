@@ -13,26 +13,50 @@ interface ConversationListProps {
   conversations: Conversation[];
   activeId: string;
   onSelect: (id: string) => void;
+  onNewChat?: () => void;
 }
 
 export default function ConversationList({
   conversations,
   activeId,
-  onSelect
+  onSelect,
+  onNewChat,
 }: ConversationListProps) {
   return (
-    <div className="w-64 border-r border-slate-200 bg-[#F8FAFC] flex flex-col h-full shrink-0 font-sans">
+    <div className="w-56 border-r border-slate-200 bg-[#F8FAFC] flex flex-col h-full shrink-0 font-sans">
       {/* Title */}
       <div className="px-4 py-3.5 border-b border-slate-200 bg-slate-100/60 flex items-center justify-between">
         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
           <MessageSquare className="h-4 w-4 text-slate-400" />
           Research Sessions
         </span>
-        <span className="text-[9px] font-mono text-slate-400">{conversations.length} Active</span>
+        <span className="text-[9px] font-mono text-slate-400">{conversations.length} saved</span>
       </div>
+
+      {/* New chat */}
+      {onNewChat ? (
+        <div className="p-2 pb-0">
+          <button
+            type="button"
+            onClick={onNewChat}
+            className={`w-full text-left p-3 border transition-colors text-xs font-bold ${
+              activeId === "new"
+                ? "border-slate-800 bg-white shadow-sm text-slate-950"
+                : "border-dashed border-slate-300 text-slate-600 hover:bg-slate-200/50"
+            }`}
+          >
+            + New Query
+          </button>
+        </div>
+      ) : null}
 
       {/* List */}
       <div className="p-2 space-y-1 overflow-y-auto flex-grow">
+        {conversations.length === 0 ? (
+          <p className="px-3 py-4 text-[10px] font-mono text-slate-400 text-center">
+            No queries yet this session.
+          </p>
+        ) : null}
         {conversations.map((item) => {
           const isActive = activeId === item.id;
           return (

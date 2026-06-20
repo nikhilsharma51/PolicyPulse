@@ -13,6 +13,7 @@ import {
 import Status from "@/components/documents/Status";
 import RecentUpload from "@/components/documents/RecentUpload";
 import Header from "@/components/documents/Header";
+import RecentActivity from "@/components/dashboard/RecentActivity";
 
 type IngestResponse = {
   doc_id: string;
@@ -230,7 +231,7 @@ export default function DocumentsPage() {
           )}
 
           {/* Recent Uploads Table */}
-          <RecentUpload uploads={uploads} />
+          {/* <RecentActivity/> */}
         </div>
 
         {/* Right Hand: Document Status Summary Panel (Col-span 4) */}

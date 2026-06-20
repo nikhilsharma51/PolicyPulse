@@ -17,7 +17,8 @@ interface AnswerWorkspaceProps {
   citations: string[];
   selectedCitation: string | null;
   onSelectCitation: (citation: string | null) => void;
-  docId?: string;
+  docId: string;
+  docName?: string;
   onQueryComplete?: (result: {
     question: string;
     answer: string;
@@ -45,14 +46,13 @@ export default function AnswerWorkspace({
   selectedCitation,
   onSelectCitation,
   docId,
-  onQueryComplete
+  docName,
+  onQueryComplete,
 }: AnswerWorkspaceProps) {
   const [question, setQuestion] = useState(query);
   const [currentQuery, setCurrentQuery] = useState(query);
   const [currentAnswer, setCurrentAnswer] = useState(answer);
   const [currentCitations, setCurrentCitations] = useState(citations);
-  const [localDocumentId, setLocalDocumentId] = useState("");
-  const documentId = docId || localDocumentId;
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +60,7 @@ export default function AnswerWorkspace({
     event.preventDefault();
 
     const trimmedQuestion = question.trim();
-    const trimmedDocId = documentId.trim();
+    const trimmedDocId = docId.trim();
 
     if (!trimmedQuestion) {
       setError("Enter a question before running a query.");
@@ -68,7 +68,7 @@ export default function AnswerWorkspace({
     }
 
     if (!trimmedDocId) {
-      setError("Enter the doc_id returned by ingestion before querying.");
+      setError("Select a document before querying.");
       return;
     }
 
@@ -121,7 +121,9 @@ export default function AnswerWorkspace({
     if (!text) {
       return (
         <span className="text-slate-400">
-          {isStreaming ? "Generating grounded answer..." : "Ask a question to generate an answer from the uploaded document."}
+          {isStreaming
+            ? "Generating grounded answer..."
+            : "Ask a question to generate an answer from the selected document."}
         </span>
       );
     }
@@ -173,19 +175,32 @@ export default function AnswerWorkspace({
       <div className="space-y-6">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-3">
           <HelpCircle className="h-4 w-4 text-slate-400" />
-          <span>Research Workspace & Grounding Inspector</span>
+          <span>Research Workspace</span>
         </div>
+
+        {docName ? (
+          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 border border-slate-200 bg-slate-50 px-3 py-2">
+            <span className="uppercase text-slate-400">Context:</span>
+            <span className="font-bold text-slate-800 truncate">{docName}</span>
+          </div>
+        ) : null}
 
         <div className="space-y-1.5">
           <span className="block text-[9px] font-mono uppercase text-slate-400">{"// Query Input"}</span>
           <div className="flex border border-slate-300 bg-[#F8FAFC] px-4 py-3 text-sm font-bold text-slate-900 shadow-inner min-h-11">
-            {currentQuery}
+            {currentQuery || (
+              <span className="text-slate-400 font-normal text-xs">
+                Your question will appear here after you submit.
+              </span>
+            )}
           </div>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="block text-[9px] font-mono uppercase text-slate-400">{"// Grounded Pipeline Generation"}</span>
+            <span className="block text-[9px] font-mono uppercase text-slate-400">
+              {"// Grounded Answer"}
+            </span>
             {isStreaming ? (
               <span className="inline-flex items-center gap-1.5 text-[9px] font-mono uppercase text-slate-500">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -207,27 +222,19 @@ export default function AnswerWorkspace({
       </div>
 
       <form onSubmit={handleSubmit} className="pt-4 border-t border-slate-100 mt-6 space-y-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_9rem_2.25rem] gap-2">
+        <div className="flex gap-2">
           <input
             type="text"
             placeholder="Ask a policy question..."
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
-            disabled={isStreaming}
-            className="min-w-0 border border-slate-200 bg-[#F8FAFC] px-3 py-2 font-sans text-xs text-slate-700 outline-none focus:border-slate-500 disabled:cursor-wait disabled:text-slate-400"
-          />
-          <input
-            type="text"
-            placeholder="doc_id"
-            value={documentId}
-            onChange={(event) => setLocalDocumentId(event.target.value)}
-            disabled={isStreaming || Boolean(docId)}
-            className="min-w-0 border border-slate-200 bg-[#F8FAFC] px-3 py-2 font-mono text-[10px] text-slate-700 outline-none focus:border-slate-500 disabled:cursor-not-allowed disabled:text-slate-400"
+            disabled={isStreaming || !docId}
+            className="min-w-0 flex-1 border border-slate-200 bg-[#F8FAFC] px-3 py-2 font-sans text-xs text-slate-700 outline-none focus:border-slate-500 disabled:cursor-not-allowed disabled:text-slate-400"
           />
           <button
             type="submit"
-            disabled={isStreaming}
-            className="inline-flex h-9 w-9 items-center justify-center border border-slate-800 bg-slate-900 text-white hover:bg-accent hover:border-accent hover:text-slate-900 transition-colors disabled:cursor-wait disabled:opacity-60"
+            disabled={isStreaming || !docId}
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-slate-800 bg-slate-900 text-white hover:bg-accent hover:border-accent hover:text-slate-900 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
             aria-label="Submit query"
           >
             {isStreaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
@@ -240,7 +247,7 @@ export default function AnswerWorkspace({
             Answer restricted to uploaded context chunks.
           </span>
           <span className="flex items-center gap-1">
-            <span>{documentId ? "Document context ready" : "Waiting for doc_id"}</span>
+            <span>{docId ? "Document context ready" : "Select a document to query"}</span>
             <CornerDownLeft className="h-3.5 w-3.5 text-slate-300" />
           </span>
         </div>
@@ -248,7 +255,3 @@ export default function AnswerWorkspace({
     </div>
   );
 }
-
-
-
-
