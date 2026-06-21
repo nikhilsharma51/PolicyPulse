@@ -75,9 +75,7 @@ export default function FeaturesGrid() {
                 <div>
                   {/* Card Top */}
                   <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-                    <span className="font-mono text-xs font-bold text-slate-400">
-                      SYS_FEAT // {feature.num}
-                    </span>
+                    
                     <div className="flex h-8 w-8 items-center justify-center border border-slate-200 bg-slate-50 text-slate-700 transition-colors group-hover:bg-accent group-hover:border-accent group-hover:text-slate-900">
                       <Icon className="h-4 w-4 stroke-[1.5]" />
                     </div>

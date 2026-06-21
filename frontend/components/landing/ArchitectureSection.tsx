@@ -58,9 +58,7 @@ export default function ArchitectureSection() {
         
         {/* Section Header */}
         <div className="max-w-3xl border-l-2 border-slate-800 pl-4 md:pl-6 mb-16">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            System Architecture // Technical Deep-Dive
-          </span>
+          
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl uppercase">
             Built on transparent retrieval systems
           </h2>

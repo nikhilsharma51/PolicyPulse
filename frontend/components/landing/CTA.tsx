@@ -36,17 +36,7 @@ export default function CTA() {
             </div>
           </div>
           
-          {/* Technical sub-metrics */}
-          <div className="mt-12 border-t border-slate-800 pt-6 flex flex-col md:flex-row items-start md:items-center justify-between text-[10px] font-mono text-slate-500 gap-4">
-            <div className="flex items-center gap-1.5">
-              <Terminal className="h-3.5 w-3.5 text-slate-600" />
-              <span>SYSTEM HASH: 9f72b38cd48ea112108ac</span>
-            </div>
-            <div className="flex gap-4">
-              <span>COMPLIANCE: SOC2 TYPE II</span>
-              <span>DEPLOYMENT: ONSITE / HYBRID</span>
-            </div>
-          </div>
+          
         </div>
       </div>
     </section>

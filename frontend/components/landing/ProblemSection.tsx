@@ -6,9 +6,7 @@ export default function ProblemSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl border-l-2 border-slate-800 pl-4 md:pl-6 mb-16">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            Comparative Analysis // Architecture Failures
-          </span>
+          
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl uppercase">
             Why traditional document search fails
           </h2>
