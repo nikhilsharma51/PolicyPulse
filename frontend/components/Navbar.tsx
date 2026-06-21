@@ -39,7 +39,7 @@ export default function Navbar() {
             
             
             <Link
-              href="https://github.com"
+              href="https://github.com/nikhilsharma51/PolicyPulse"
               target="_blank"
               rel="noreferrer"
               className="font-mono text-xs uppercase tracking-wider text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-0.5"
