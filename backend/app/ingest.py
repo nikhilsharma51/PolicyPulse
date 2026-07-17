@@ -1,7 +1,7 @@
 from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from fastapi import APIRouter , UploadFile ,HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile
 from app.db import supabase
 from app.config import EMBEDDING_DIM, EMBEDDING_MODEL
 import uuid
@@ -72,7 +72,7 @@ def store_chunks(doc_id: str, chunks: list[dict]):
 
 
 @router.post("/ingest")
-async def ingest(file : UploadFile):
+async def ingest(file: UploadFile, background_tasks: BackgroundTasks):
     content = await file.read()
     if len(content) > MAX_FILE_SIZE:
         raise HTTPException(400,"File too large")
@@ -88,6 +88,10 @@ async def ingest(file : UploadFile):
 
     chunks = chunk_pages(pages)
     chunks = embed_chunks(chunks)
-    store_chunks(doc_id,chunks)
+    store_chunks(doc_id, chunks)
 
-    return {"doc_id": doc_id , "chunk_count":len(chunks)}
+    from app.eval import run_eval_for_document
+
+    background_tasks.add_task(run_eval_for_document, doc_id)
+
+    return {"doc_id": doc_id, "chunk_count": len(chunks)}

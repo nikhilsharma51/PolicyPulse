@@ -11,6 +11,18 @@ export type Document = {
   created_at: string;
 };
 
+export type EvalScore = {
+  id: string;
+  doc_id: string;
+  question: string;
+  answer?: string | null;
+  faithfulness?: number | null;
+  answer_relevancy?: number | null;
+  context_precision?: number | null;
+  context_recall?: number | null;
+  created_at: string;
+};
+
 export async function fetchDocuments(limit = 50): Promise<Document[]> {
   const res = await fetch(`/api/documents?limit=${limit}`);
   if (!res.ok) {
@@ -18,6 +30,33 @@ export async function fetchDocuments(limit = 50): Promise<Document[]> {
     throw new Error(errData.error || "Failed to fetch documents");
   }
   return res.json();
+}
+
+export async function fetchEvalScores(
+  docId: string,
+  limit = 20
+): Promise<EvalScore[]> {
+  const res = await fetch(
+    `/api/eval?doc_id=${encodeURIComponent(docId)}&limit=${limit}`
+  );
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Failed to fetch eval scores");
+  }
+  return res.json();
+}
+
+export async function runEval(docId: string): Promise<{ status: string; message: string }> {
+  const res = await fetch("/api/eval", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ doc_id: docId }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to start evaluation");
+  }
+  return data;
 }
 
 export async function streamQuery(

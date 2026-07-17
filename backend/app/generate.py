@@ -9,7 +9,14 @@ llm = ChatGoogleGenerativeAI(
     model=LLM_MODEL,
     temperature=LLM_TEMPERATURE,
     max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
-    streaming=True
+    streaming=True,
+)
+
+llm_sync = ChatGoogleGenerativeAI(
+    model=LLM_MODEL,
+    temperature=LLM_TEMPERATURE,
+    max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
+    streaming=False,
 )
 
 SYSTEM_PROMPT = (
@@ -32,6 +39,20 @@ def build_context(chunks:list[dict])-> tuple[str,list[dict]]:
             "content": chunk["content"],
         })
     return "\n\n".join(context_parts), sources
+
+def answer_question(question: str, doc_id: str) -> tuple[str, list[str], list[dict]]:
+    chunks = hybrid_retrieve(question, doc_id)
+    context, sources = build_context(chunks)
+    contexts = [chunk["content"] for chunk in chunks]
+
+    messages = [
+        SystemMessage(content=SYSTEM_PROMPT),
+        HumanMessage(content=f"Context:\n{context}\n\nQuestion: {question}"),
+    ]
+    response = llm_sync.invoke(messages)
+    answer = response.content if isinstance(response.content, str) else str(response.content)
+    return answer, contexts, sources
+
 
 async def stream_answer(question: str, doc_id: str):
     chunks = hybrid_retrieve(question, doc_id)

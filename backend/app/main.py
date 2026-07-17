@@ -1,12 +1,12 @@
 # app/main.py
 import os
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from app.ingest import router as ingest_router
 from app.generate import stream_answer
+from app.ingest import router as ingest_router
 from app.db import supabase
 
 app = FastAPI(title="PolicyPulse RAG API")
@@ -72,14 +72,6 @@ def get_document(doc_id: str):
         raise HTTPException(404, "Document not found")
     return result.data
 
-@app.get("/eval/scores")
-def get_eval_scores(doc_id: str, limit: int = 20):
-    result = (
-        supabase.table("ragas_scores")
-        .select("*")
-        .eq("doc_id", doc_id)
-        .order("created_at", desc=True)
-        .limit(limit)
-        .execute()
-    )
-    return result.data
+
+
+
