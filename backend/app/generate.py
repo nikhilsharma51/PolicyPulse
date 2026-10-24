@@ -55,18 +55,40 @@ def answer_question(question: str, doc_id: str) -> tuple[str, list[str], list[di
 
 
 async def stream_answer(question: str, doc_id: str):
-    chunks = hybrid_retrieve(question, doc_id)
-    context, sources = build_context(chunks)
+    try:
+        try:
+            chunks = hybrid_retrieve(question, doc_id)
+        except Exception as e:
+            yield f"data: {json.dumps({'error': f'Retrieval failed: {str(e)}'})}\n\n"
+            yield "data: [DONE]\n\n"
+            return
 
-    messages = [
-        SystemMessage(content=SYSTEM_PROMPT),
-        HumanMessage(content=f"Context:\n{context}\n\nQuestion: {question}"),
-    ]
+        if not chunks:
+            yield f"data: {json.dumps({'error': 'No relevant documents found'})}\n\n"
+            yield "data: [DONE]\n\n"
+            return
 
-    async for chunk in llm.astream(messages):
-        token = chunk.content
-        if token:
-            yield f"data: {json.dumps({'token': token})}\n\n"
+        context, sources = build_context(chunks)
 
-    yield f"data: {json.dumps({'done': True, 'sources': sources})}\n\n"
-    yield "data: [DONE]\n\n"
+        messages = [
+            SystemMessage(content=SYSTEM_PROMPT),
+            HumanMessage(content=f"Context:\n{context}\n\nQuestion: {question}"),
+        ]
+
+        try:
+            async for chunk in llm.astream(messages):
+                token = chunk.content
+                if token:
+                    yield f"data: {json.dumps({'token': token})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': f'Answer generation failed: {str(e)}'})}\n\n"
+            yield "data: [DONE]\n\n"
+            return
+
+        yield f"data: {json.dumps({'done': True, 'sources': sources})}\n\n"
+        yield "data: [DONE]\n\n"
+
+    except Exception as e:
+        print(f"Unexpected error in stream_answer: {e}")
+        yield f"data: {json.dumps({'error': 'Unexpected error occurred'})}\n\n"
+        yield "data: [DONE]\n\n"
