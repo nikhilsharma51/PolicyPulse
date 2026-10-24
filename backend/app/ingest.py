@@ -30,120 +30,44 @@ splitter = RecursiveCharacterTextSplitter(
 )
 
 def chunk_pages(pages : list[dict]) -> list[dict]:
-    if not pages:
-        return []
+   chunks = []
 
-    all_text = "\n\n---PAGE_BREAK---\n\n".join([p["text"] for p in pages])
-    text_chunks = splitter.split_text(all_text)
+   for page in pages:
+      page_chunks = splitter.split_text(page["text"])
+      for idx, chunk_text in enumerate(page_chunks):
+         chunks.append({
+            "content":chunk_text,
+            "page_number" : page["page_number"],
+            "chunk_index":len(chunks),
+         })
 
-    chunks = []
-    chunk_index = 0
-
-    for chunk_text in text_chunks:
-        page_count = all_text[:all_text.find(chunk_text)].count("---PAGE_BREAK---")
-        page_number = page_count + 1 if page_count < len(pages) else len(pages)
-
-        chunks.append({
-            "content": chunk_text,
-            "page_number": page_number,
-            "chunk_index": chunk_index,
-        })
-        chunk_index += 1
-
-    from app.logging_config import logger
-    logger.info(f"Created {len(chunks)} chunks from {len(pages)} pages")
-
-    return chunks     
+   return chunks     
 
 
-embedder = GoogleGenerativeAIEmbeddings(
-    model=EMBEDDING_MODEL, 
-    output_dimensionality=EMBEDDING_DIM,
-    timeout=30,
-)
+embedder = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL, output_dimensionality=EMBEDDING_DIM)
 
 def embed_chunks(chunks : list[dict], batch_size: int = 20) -> list[dict]:
-    texts = [c["content"] for c in chunks]
-    MAX_RETRIES = 3
+   texts = [c["content"] for c in chunks]
+   for i in range(0 , len(texts),batch_size):
+      batch = texts[i:i + batch_size]
+      embeddings = embedder.embed_documents(batch)
+      for j, emb in enumerate(embeddings):
+            chunks[i + j]["embedding"] = emb
+      if i + batch_size < len(texts):
+            time.sleep(1)
 
-    for i in range(0, len(texts), batch_size):
-        batch = texts[i:i + batch_size]
-
-        for attempt in range(MAX_RETRIES):
-            try:
-                embeddings = embedder.embed_documents(batch)
-
-                for j, emb in enumerate(embeddings):
-                    if i + j < len(chunks):
-                        chunks[i + j]["embedding"] = emb
-
-                if i + batch_size < len(texts):
-                    time.sleep(1)
-
-                break
-
-            except Exception as e:
-                error_msg = str(e).lower()
-                is_rate_limit = "quota" in error_msg or "rate" in error_msg or "429" in error_msg
-
-                if is_rate_limit and attempt < MAX_RETRIES - 1:
-                    wait_time = (2 ** attempt) * 5
-                    from app.logging_config import logger
-                    logger.warning(f"Rate limited on batch {i//batch_size}. Waiting {wait_time}s before retry...")
-                    time.sleep(wait_time)
-                else:
-                    from app.logging_config import logger
-                    logger.error(f"Failed to embed batch {i//batch_size} after {attempt + 1} attempts: {str(e)}")
-                    raise RuntimeError(f"Failed to embed batch: {str(e)}")
-
-    return chunks     
+   return chunks     
 
 def store_chunks(doc_id: str, chunks: list[dict]):
-    from app.logging_config import logger
-
-    if not chunks:
-        logger.warning(f"No chunks to store for doc_id={doc_id}")
-        return
-
     rows = []
-    skipped = 0
-
     for c in chunks:
-        if not c.get("content") or not str(c.get("content")).strip():
-            logger.warning(f"Skipping empty chunk at index {c.get('chunk_index')}")
-            skipped += 1
-            continue
-
-        embedding = c.get("embedding")
-        if not embedding:
-            logger.error(f"Missing embedding for chunk at index {c.get('chunk_index')}")
-            raise ValueError(f"Chunk {c.get('chunk_index')} is missing embedding")
-
-        if not isinstance(embedding, list):
-            logger.error(f"Embedding is not a list: {type(embedding)}")
-            raise ValueError(f"Embedding must be a list, got {type(embedding)}")
-
-        if len(embedding) != EMBEDDING_DIM:
-            logger.error(f"Wrong embedding dimension: {len(embedding)} (expected {EMBEDDING_DIM})")
-            raise ValueError(f"Embedding dimension mismatch: {len(embedding)} != {EMBEDDING_DIM}")
-
-        page_number = c.get("page_number")
-        if not isinstance(page_number, int) or page_number < 1:
-            logger.warning(f"Invalid page number: {page_number}, using 1")
-            page_number = 1
-
         rows.append({
             "doc_id": doc_id,
-            "content": c["content"].strip(),
-            "embedding": embedding,
+            "content": c["content"],
+            "embedding": c["embedding"],
             "chunk_index": c["chunk_index"],
-            "metadata": {"page_number": page_number},
+            "metadata": {"page_number": c["page_number"]},
         })
-
-    if not rows:
-        raise ValueError(f"All {len(chunks)} chunks were invalid or empty")
-
-    logger.info(f"Storing {len(rows)} chunks (skipped {skipped})")
     supabase.table("chunks").insert(rows).execute()
 
 
