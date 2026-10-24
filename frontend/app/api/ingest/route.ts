@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const authHeader = request.headers.get("Authorization");
 
     if (!file) {
       return NextResponse.json(
@@ -49,6 +50,9 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${FASTAPI_URL}/ingest`, {
       method: "POST",
       body: proxyForm,
+      headers: {
+        ...(authHeader && { "Authorization": authHeader }),
+      },
       signal: AbortSignal.timeout(5 * 60 * 1000),
     });
 

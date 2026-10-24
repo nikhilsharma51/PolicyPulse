@@ -68,7 +68,10 @@ export async function streamQuery(
   try {
     const res = await fetch("/api/query", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_KEY || ""}`,
+      },
       body: JSON.stringify({ question, doc_id: docId }),
     });
 
