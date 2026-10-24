@@ -5,11 +5,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from app.config import LLM_MAX_OUTPUT_TOKENS , LLM_MODEL , LLM_TEMPERATURE 
 from app.retrieval import hybrid_retrieve
 
+LLM_REQUEST_TIMEOUT = 60
+
 llm = ChatGoogleGenerativeAI(
     model=LLM_MODEL,
     temperature=LLM_TEMPERATURE,
     max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
     streaming=True,
+    timeout=LLM_REQUEST_TIMEOUT,
 )
 
 llm_sync = ChatGoogleGenerativeAI(
@@ -17,6 +20,7 @@ llm_sync = ChatGoogleGenerativeAI(
     temperature=LLM_TEMPERATURE,
     max_output_tokens=LLM_MAX_OUTPUT_TOKENS,
     streaming=False,
+    timeout=LLM_REQUEST_TIMEOUT,
 )
 
 SYSTEM_PROMPT = (
