@@ -1,4 +1,3 @@
-// lib/api.ts
 export type QueryToken = { token: string };
 export type QueryDone = { done: true; sources: Source[] };
 export type Source = { source_number: number; page: number | string; content: string };
@@ -75,13 +74,14 @@ export async function streamQuery(
 
     if (!res.ok || !res.body) {
       const errData = await res.json().catch(() => ({}));
-      onError(errData.error || "Query failed");
+      onError(errData.detail || errData.error || `Query failed: ${res.status}`);
       return;
     }
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
+    let hasError = false;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -97,19 +97,31 @@ export async function streamQuery(
 
         if (payload === "[DONE]") continue;
 
-        const parsed = JSON.parse(payload);
-        if ("error" in parsed) {
-          onError(parsed.error);
-          return;
-        }
-        if ("token" in parsed) {
-          onToken(parsed.token);
-        } else if ("done" in parsed) {
-          onDone(parsed.sources);
+        try {
+          const parsed = JSON.parse(payload);
+
+          if ("error" in parsed) {
+            onError(parsed.error);
+            hasError = true;
+            return;
+          }
+          if ("token" in parsed && typeof parsed.token === "string") {
+            onToken(parsed.token);
+          } else if ("done" in parsed && parsed.done === true) {
+            onDone(Array.isArray(parsed.sources) ? parsed.sources : []);
+          }
+        } catch (parseError) {
+          console.warn("Failed to parse SSE message:", payload, parseError);
         }
       }
     }
-  } catch {
-    onError("Network error. Is the backend running?");
+
+    if (!hasError && buffer.trim()) {
+      console.warn("Stream ended with unparsed buffer:", buffer);
+      onError("Stream ended unexpectedly");
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    onError(`Network error: ${message}. Is the backend running?`);
   }
 }

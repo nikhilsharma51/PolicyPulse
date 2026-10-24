@@ -74,9 +74,30 @@ def rerank(query:str , chunks:list[dict] , top_n : int = RERANK_TOP_N) -> list[d
 
 
 def hybrid_retrieve(query: str, doc_id: str) -> list[dict]:
-    dense = dense_search(doc_id=doc_id, query=query)
-    sparse = sparse_search(doc_id=doc_id, query=query)
+    try:
+        dense = dense_search(doc_id=doc_id, query=query)
+    except Exception as e:
+        print(f"Dense search failed: {e}, falling back to sparse only")
+        dense = []
+
+    try:
+        sparse = sparse_search(doc_id=doc_id, query=query)
+    except Exception as e:
+        print(f"Sparse search failed: {e}, falling back to dense only")
+        sparse = []
+
+    if not dense and not sparse:
+        raise ValueError(
+            f"Retrieval failed for doc_id={doc_id}: both dense and sparse search returned nothing"
+        )
+
     merged = rrf_merge(dense, sparse)
-    reranked = rerank(query, merged)
+
+    try:
+        reranked = rerank(query, merged)
+    except Exception as e:
+        print(f"Reranking failed: {e}, returning unranked results")
+        reranked = merged
+
     return reranked
 

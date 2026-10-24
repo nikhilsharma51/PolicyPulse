@@ -13,7 +13,7 @@ from ragas.metrics import (
 )
 
 from app.generate import stream_answer  # or a non-streaming variant, see note below
-from app.retrieve import hybrid_retrieve  # your BM25+dense+RRF+rerank function
+from app.retrieval import hybrid_retrieve  # your BM25+dense+RRF+rerank function
 
 TESTSET_PATH = Path(__file__).parent / "testset.json"
 

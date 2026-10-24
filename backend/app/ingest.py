@@ -75,23 +75,42 @@ def store_chunks(doc_id: str, chunks: list[dict]):
 async def ingest(file: UploadFile, background_tasks: BackgroundTasks):
     content = await file.read()
     if len(content) > MAX_FILE_SIZE:
-        raise HTTPException(400,"File too large")
-    
-    pages = extract_pages(content)
-    if not pages :
-        raise HTTPException(400,"No extractable text found ,this maybe a scanned image/pdf")
-    
-    doc_id = str(uuid.uuid4())
-    supabase.table("documents").insert({
-        "id": doc_id, "name": file.filename
-    }).execute()
+        raise HTTPException(400, "File too large")
 
-    chunks = chunk_pages(pages)
-    chunks = embed_chunks(chunks)
-    store_chunks(doc_id, chunks)
+    pages = extract_pages(content)
+    if not pages:
+        raise HTTPException(400, "No extractable text found, this maybe a scanned image/pdf")
+
+    doc_id = str(uuid.uuid4())
+    try:
+        supabase.table("documents").insert({
+            "id": doc_id, "name": file.filename
+        }).execute()
+    except Exception as e:
+        raise HTTPException(500, f"Failed to create document record: {str(e)}")
+
+    try:
+        chunks = chunk_pages(pages)
+        if not chunks:
+            raise HTTPException(400, "No chunks created from PDF")
+
+        chunks = embed_chunks(chunks)
+        store_chunks(doc_id, chunks)
+
+    except HTTPException:
+        try:
+            supabase.table("documents").delete().eq("id", doc_id).execute()
+        except Exception:
+            pass
+        raise
+    except Exception as e:
+        try:
+            supabase.table("documents").delete().eq("id", doc_id).execute()
+        except Exception:
+            pass
+        raise HTTPException(500, f"Failed to process document: {str(e)}")
 
     from app.eval import run_eval_for_document
-
     background_tasks.add_task(run_eval_for_document, doc_id)
 
     return {"doc_id": doc_id, "chunk_count": len(chunks)}
