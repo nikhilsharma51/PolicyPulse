@@ -7,7 +7,7 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, status, De
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.exceptions import RequestValidationError
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, validator
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -114,7 +114,7 @@ VALID_API_KEYS = set(
     os.environ.get("VALID_API_KEYS", "").split(",")
 )
 
-def verify_api_key(credentials: HTTPAuthCredentials = Depends(security)):
+def verify_api_key(credentials = Depends(security)):
     if not VALID_API_KEYS or not credentials.credentials:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

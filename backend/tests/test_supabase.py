@@ -10,8 +10,6 @@ if not supabase_url or not supabase_key:
 
 supabase = create_client(supabase_url,supabase_key)
 
-# print("Supabase connected successfully")
-
 response = (
     supabase.table("documents")
     .select("*")
