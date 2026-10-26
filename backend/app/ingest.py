@@ -1,7 +1,7 @@
 from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, Request
 from app.db import supabase
 from app.config import EMBEDDING_DIM, EMBEDDING_MODEL
 import uuid
@@ -148,7 +148,7 @@ def store_chunks(doc_id: str, chunks: list[dict]):
 
 
 @router.post("/ingest")
-async def ingest(file: UploadFile, background_tasks: BackgroundTasks):
+async def ingest(file: UploadFile, background_tasks: BackgroundTasks, request: Request):
     from app.logging_config import logger
     
     logger.info(f"Ingest started: filename={file.filename}")

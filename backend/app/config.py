@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+ENV = os.environ.get("ENV", "development").lower()
+IS_PRODUCTION = ENV == "production"
+
 # --- API keys ---
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
